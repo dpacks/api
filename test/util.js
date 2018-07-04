@@ -1,5 +1,5 @@
 const ddrive = require('@ddrive/core')
-const ScopedFS = require('@dbrowser/vfs-wrapper')
+const ScopedFS = require('@dbrowser/vfswrapper')
 const fs = require('fs')
 const os = require('os')
 const path = require('path')
