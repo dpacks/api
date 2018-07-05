@@ -16,7 +16,7 @@ Platform:
 npm manifest: 
   {
     "name": "@dpack/api",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "description": "dPack API Library That Works Directly with dBrowser Core.",
     "contributors": [
       "Jared Rice Sr. <jared@dwebs.io>",
@@ -40,7 +40,7 @@ npm manifest:
       "fs-extra": "^4.0.3"
     },
     "devDependencies": {
-      "@dbrowser/vfswrapper": "dbrowsers/vfs-wrapper#master",
+      "@dbrowser/vfswrapper": "dbrowser/vfs-wrapper#master",
       "@ddrive/core": "ddrives/core#master",
       "ava": "^0.18.1",
       "babel-cli": "^6.26.0",
