@@ -374,7 +374,7 @@ test('createNetworkActivityStream', async t => {
         gotPeer = true
       } else if (event === 'download') {
         stats[args.feed].down++
-      } else if (event === 'dweb') {
+      } else if (event === 'sync') {
         stats[args.feed].synced = true
       }
       if (gotPeer &&
