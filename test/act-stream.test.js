@@ -1,7 +1,7 @@
 const test = require('ava')
 const ddrive = require('@ddrive/core')
 const tutil = require('./util')
-const dpackapi = require('../index')
+const pda = require('../index')
 
 async function contentEvent (vault) {
   return new Promise(resolve => {
@@ -11,7 +11,7 @@ async function contentEvent (vault) {
 
 test('watch fs', async t => {
   // HACK
-  // 100ms timeouts are needed here because the FS watcher is not as consistent as dPack's
+  // 100ms timeouts are needed here because the FS watcher is not as consistent as dat's
   // -prf
 
   var fs
@@ -23,7 +23,7 @@ test('watch fs', async t => {
   // =
 
   fs = await tutil.createFs()
-  stream = await dpackapi.watch(fs)
+  stream = await pda.watch(fs)
 
   done = new Promise(resolve => {
     changes = ['/a.txt', '/b.txt', '/a.txt', '/a.txt', '/b.txt', '/c.txt']
@@ -40,24 +40,24 @@ test('watch fs', async t => {
   })
 
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/a.txt', 'one', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/b.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/b.txt', 'one', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/a.txt', 'one', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/a.txt', 'two', 'utf8')
+  await pda.writeFile(fs, '/a.txt', 'two', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/b.txt', 'two', 'utf8')
+  await pda.writeFile(fs, '/b.txt', 'two', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/c.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/c.txt', 'one', 'utf8')
   await done
 
   // simple pattern
   // =
 
   fs = await tutil.createFs()
-  stream = await dpackapi.watch(fs, '/a.txt')
+  stream = await pda.watch(fs, '/a.txt')
 
   done = new Promise(resolve => {
     changes = ['/a.txt', '/a.txt', '/a.txt']
@@ -74,24 +74,24 @@ test('watch fs', async t => {
   })
 
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/a.txt', 'one', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/b.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/b.txt', 'one', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/a.txt', 'one', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/a.txt', 'two', 'utf8')
+  await pda.writeFile(fs, '/a.txt', 'two', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/b.txt', 'two', 'utf8')
+  await pda.writeFile(fs, '/b.txt', 'two', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/c.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/c.txt', 'one', 'utf8')
   await done
 
   // complex pattern
   // =
 
   fs = await tutil.createFs()
-  stream = await dpackapi.watch(fs, ['/a.txt', '/c.txt'])
+  stream = await pda.watch(fs, ['/a.txt', '/c.txt'])
 
   done = new Promise(resolve => {
     let i = 0
@@ -108,24 +108,24 @@ test('watch fs', async t => {
   })
 
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/a.txt', 'one', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/b.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/b.txt', 'one', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/a.txt', 'one', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/a.txt', 'two', 'utf8')
+  await pda.writeFile(fs, '/a.txt', 'two', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/b.txt', 'two', 'utf8')
+  await pda.writeFile(fs, '/b.txt', 'two', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/c.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/c.txt', 'one', 'utf8')
   await done
 
   // glob
   // =
 
   fs = await tutil.createFs()
-  stream = await dpackapi.watch(fs, '/*.txt')
+  stream = await pda.watch(fs, '/*.txt')
 
   done = new Promise(resolve => {
     let i = 0
@@ -142,17 +142,17 @@ test('watch fs', async t => {
   })
 
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/a.txt', 'one', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/b.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/b.txt', 'one', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/a.txt', 'one', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/a.txt', 'two', 'utf8')
+  await pda.writeFile(fs, '/a.txt', 'two', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/b.txt', 'two', 'utf8')
+  await pda.writeFile(fs, '/b.txt', 'two', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await dpackapi.writeFile(fs, '/c.txt', 'one', 'utf8')
+  await pda.writeFile(fs, '/c.txt', 'one', 'utf8')
   await done
 })
 
@@ -167,7 +167,7 @@ test('watch local', async t => {
 
   vault = await tutil.createVault()
   await new Promise(resolve => vault.ready(resolve))
-  stream = dpackapi.watch(vault)
+  stream = pda.watch(vault)
 
   done = new Promise(resolve => {
     changes = ['/a.txt', '/b.txt', '/a.txt', '/a.txt', '/b.txt', '/c.txt']
@@ -178,12 +178,12 @@ test('watch local', async t => {
     })
   })
 
-  await dpackapi.writeFile(vault, '/a.txt', 'one', 'utf8')
-  await dpackapi.writeFile(vault, '/b.txt', 'one', 'utf8')
-  await dpackapi.writeFile(vault, '/a.txt', 'one', 'utf8')
-  await dpackapi.writeFile(vault, '/a.txt', 'two', 'utf8')
-  await dpackapi.writeFile(vault, '/b.txt', 'two', 'utf8')
-  await dpackapi.writeFile(vault, '/c.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/b.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/a.txt', 'two', 'utf8')
+  await pda.writeFile(vault, '/b.txt', 'two', 'utf8')
+  await pda.writeFile(vault, '/c.txt', 'one', 'utf8')
   await done
 
   // simple pattern
@@ -191,7 +191,7 @@ test('watch local', async t => {
 
   vault = await tutil.createVault()
   await new Promise(resolve => vault.ready(resolve))
-  stream = dpackapi.watch(vault, '/a.txt')
+  stream = pda.watch(vault, '/a.txt')
 
   done = new Promise(resolve => {
     changes = ['/a.txt', '/a.txt', '/a.txt']
@@ -202,12 +202,12 @@ test('watch local', async t => {
     })
   })
 
-  await dpackapi.writeFile(vault, '/a.txt', 'one', 'utf8')
-  await dpackapi.writeFile(vault, '/b.txt', 'one', 'utf8')
-  await dpackapi.writeFile(vault, '/a.txt', 'one', 'utf8')
-  await dpackapi.writeFile(vault, '/a.txt', 'two', 'utf8')
-  await dpackapi.writeFile(vault, '/b.txt', 'two', 'utf8')
-  await dpackapi.writeFile(vault, '/c.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/b.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/a.txt', 'two', 'utf8')
+  await pda.writeFile(vault, '/b.txt', 'two', 'utf8')
+  await pda.writeFile(vault, '/c.txt', 'one', 'utf8')
   await done
 
   // complex pattern
@@ -215,7 +215,7 @@ test('watch local', async t => {
 
   vault = await tutil.createVault()
   await new Promise(resolve => vault.ready(resolve))
-  stream = dpackapi.watch(vault, ['/a.txt', '/c.txt'])
+  stream = pda.watch(vault, ['/a.txt', '/c.txt'])
 
   done = new Promise(resolve => {
     changes = ['/a.txt', '/a.txt', '/a.txt', '/c.txt']
@@ -226,12 +226,12 @@ test('watch local', async t => {
     })
   })
 
-  await dpackapi.writeFile(vault, '/a.txt', 'one', 'utf8')
-  await dpackapi.writeFile(vault, '/b.txt', 'one', 'utf8')
-  await dpackapi.writeFile(vault, '/a.txt', 'one', 'utf8')
-  await dpackapi.writeFile(vault, '/a.txt', 'two', 'utf8')
-  await dpackapi.writeFile(vault, '/b.txt', 'two', 'utf8')
-  await dpackapi.writeFile(vault, '/c.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/b.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/a.txt', 'two', 'utf8')
+  await pda.writeFile(vault, '/b.txt', 'two', 'utf8')
+  await pda.writeFile(vault, '/c.txt', 'one', 'utf8')
   await done
 
   // glob
@@ -239,7 +239,7 @@ test('watch local', async t => {
 
   vault = await tutil.createVault()
   await new Promise(resolve => vault.ready(resolve))
-  stream = dpackapi.watch(vault, '/*.txt')
+  stream = pda.watch(vault, '/*.txt')
 
   done = new Promise(resolve => {
     changes = ['/a.txt', '/b.txt', '/a.txt', '/a.txt', '/b.txt', '/c.txt']
@@ -250,29 +250,29 @@ test('watch local', async t => {
     })
   })
 
-  await dpackapi.writeFile(vault, '/a.txt', 'one', 'utf8')
-  await dpackapi.writeFile(vault, '/b.txt', 'one', 'utf8')
-  await dpackapi.writeFile(vault, '/a.txt', 'one', 'utf8')
-  await dpackapi.writeFile(vault, '/a.txt', 'two', 'utf8')
-  await dpackapi.writeFile(vault, '/b.txt', 'two', 'utf8')
-  await dpackapi.writeFile(vault, '/c.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/b.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/a.txt', 'one', 'utf8')
+  await pda.writeFile(vault, '/a.txt', 'two', 'utf8')
+  await pda.writeFile(vault, '/b.txt', 'two', 'utf8')
+  await pda.writeFile(vault, '/c.txt', 'one', 'utf8')
   await done
 })
 
-test('watch remote thin', async t => {
+test('watch remote sparse', async t => {
   // no pattern
   // =
 
   var done
   const src = await tutil.createVault()
   await new Promise(resolve => src.ready(resolve))
-  const dst = ddrive(tutil.tmpdir(), src.key, {thin: true})
+  const dst = ddrive(tutil.tmpdir(), src.key, {sparse: true})
   const srcRS = src.replicate({live: true})
   const dstRS = dst.replicate({live: true})
   srcRS.pipe(dstRS).pipe(srcRS)
   await contentEvent(dst)
 
-  var stream = dpackapi.watch(dst)
+  var stream = pda.watch(dst)
 
   // invalidation phase
 
@@ -289,37 +289,37 @@ test('watch remote thin', async t => {
     })
   })
 
-  await dpackapi.writeFile(src, 'a.txt', 'one', 'utf8')
-  await dpackapi.writeFile(src, 'b.txt', 'one', 'utf8')
-  await dpackapi.writeFile(src, 'a.txt', 'one', 'utf8')
-  await dpackapi.writeFile(src, 'a.txt', 'two', 'utf8')
-  await dpackapi.writeFile(src, 'b.txt', 'two', 'utf8')
-  await dpackapi.writeFile(src, 'c.txt', 'one', 'utf8')
+  await pda.writeFile(src, 'a.txt', 'one', 'utf8')
+  await pda.writeFile(src, 'b.txt', 'one', 'utf8')
+  await pda.writeFile(src, 'a.txt', 'one', 'utf8')
+  await pda.writeFile(src, 'a.txt', 'two', 'utf8')
+  await pda.writeFile(src, 'b.txt', 'two', 'utf8')
+  await pda.writeFile(src, 'c.txt', 'one', 'utf8')
 
   // wait 100ms to let metadata sync
   await new Promise(resolve => setTimeout(resolve, 100))
 
-  await dpackapi.download(dst, 'a.txt')
-  await dpackapi.download(dst, 'c.txt')
-  await dpackapi.download(dst, 'b.txt')
+  await pda.download(dst, 'a.txt')
+  await pda.download(dst, 'c.txt')
+  await pda.download(dst, 'b.txt')
 
   await done
 })
 
-test('watch remote non-thin', async t => {
+test('watch remote non-sparse', async t => {
   // no pattern
   // =
 
   var done
   const src = await tutil.createVault()
   await new Promise(resolve => src.ready(resolve))
-  const dst = ddrive(tutil.tmpdir(), src.key, {thin: false})
+  const dst = ddrive(tutil.tmpdir(), src.key, {sparse: false})
   const srcRS = src.replicate({live: true})
   const dstRS = dst.replicate({live: true})
   srcRS.pipe(dstRS).pipe(srcRS)
   await contentEvent(dst)
 
-  var stream = dpackapi.watch(dst)
+  var stream = pda.watch(dst)
 
   // invalidation phase
 
@@ -338,13 +338,13 @@ test('watch remote non-thin', async t => {
     })
   })
 
-  await dpackapi.writeFile(src, 'a.txt', 'one', 'utf8')
-  await dpackapi.writeFile(src, 'b.txt', 'one', 'utf8')
-  await dpackapi.writeFile(src, 'a.txt', 'one', 'utf8')
-  await dpackapi.writeFile(src, 'a.txt', 'two', 'utf8')
-  await dpackapi.writeFile(src, 'b.txt', 'two', 'utf8')
-  await dpackapi.writeFile(src, 'c.txt', 'one', 'utf8')
-  await dpackapi.unlink(src, 'a.txt')
+  await pda.writeFile(src, 'a.txt', 'one', 'utf8')
+  await pda.writeFile(src, 'b.txt', 'one', 'utf8')
+  await pda.writeFile(src, 'a.txt', 'one', 'utf8')
+  await pda.writeFile(src, 'a.txt', 'two', 'utf8')
+  await pda.writeFile(src, 'b.txt', 'two', 'utf8')
+  await pda.writeFile(src, 'c.txt', 'one', 'utf8')
+  await pda.unlink(src, 'a.txt')
   await done
 })
 
@@ -354,10 +354,10 @@ test('createNetworkActivityStream', async t => {
     { name: 'bar.data', content: Buffer.from([0x00, 0x01]) },
     'bar.txt'
   ])
-  const dst = ddrive(tutil.tmpdir(), src.key, {thin: false})
+  const dst = ddrive(tutil.tmpdir(), src.key, {sparse: false})
 
   var done = new Promise(resolve => {
-    var stream = dpackapi.createNetworkActivityStream(dst)
+    var stream = pda.createNetworkActivityStream(dst)
     var gotPeer = false
     var stats = {
       metadata: {
