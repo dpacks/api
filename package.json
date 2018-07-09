@@ -1,6 +1,6 @@
 {
   "name": "@dpack/api",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "dPack API Library That Works Directly with dBrowser Core.",
   "contributors": [
     "Jared Rice Sr. <jared@dwebs.io>",
