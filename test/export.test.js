@@ -2,7 +2,7 @@ const test = require('ava')
 const fs = require('fs')
 const path = require('path')
 const tutil = require('./util')
-const dpackapi = require('../index')
+const dwebapi = require('../index')
 
 test('exportFilesystemToVault', async t => {
   const srcPath = tutil.tmpdir()
@@ -18,7 +18,7 @@ test('exportFilesystemToVault', async t => {
   // initial import
   // =
 
-  const statsA = await dpackapi.exportFilesystemToVault({
+  const statsA = await dwebapi.exportFilesystemToVault({
     srcPath,
     dstVault,
     inplaceImport: true
@@ -33,7 +33,7 @@ test('exportFilesystemToVault', async t => {
   // no changes
   // =
 
-  const statsB = await dpackapi.exportFilesystemToVault({
+  const statsB = await dwebapi.exportFilesystemToVault({
     srcPath,
     dstVault,
     inplaceImport: true
@@ -55,7 +55,7 @@ test('exportFilesystemToVault', async t => {
   // 2 changes, 2 additions
   // =
 
-  const statsD = await dpackapi.exportFilesystemToVault({
+  const statsD = await dwebapi.exportFilesystemToVault({
     srcPath,
     dstVault,
     inplaceImport: true
@@ -72,7 +72,7 @@ test('exportFilesystemToVault', async t => {
   // into subdir
   // =
 
-  const statsE = await dpackapi.exportFilesystemToVault({
+  const statsE = await dwebapi.exportFilesystemToVault({
     srcPath,
     dstVault,
     dstPath: '/subdir3',
@@ -89,8 +89,8 @@ test('exportFilesystemToVault', async t => {
   // dont overwrite folders with files
   // =
 
-  await dpackapi.mkdir(dstVault, '/subdir4')
-  const statsF = await dpackapi.exportFilesystemToVault({
+  await dwebapi.mkdir(dstVault, '/subdir4')
+  const statsF = await dwebapi.exportFilesystemToVault({
     srcPath: path.join(srcPath, 'foo.txt'),
     dstVault,
     dstPath: '/subdir4',
@@ -99,30 +99,30 @@ test('exportFilesystemToVault', async t => {
   t.deepEqual(statsF.addedFiles.map(tutil.tonix), ['/subdir4/foo.txt'])
   t.deepEqual(statsF.updatedFiles, [])
   t.deepEqual(statsF.skipCount, 0)
-  t.deepEqual(statsF.fileCount, 1)  
-  t.deepEqual(await dpackapi.readdir(dstVault, '/subdir4'), ['foo.txt'])
+  t.deepEqual(statsF.fileCount, 1)
+  t.deepEqual(await dwebapi.readdir(dstVault, '/subdir4'), ['foo.txt'])
 
   // into bad dest
   // =
 
-  await t.throws(dpackapi.exportFilesystemToVault({
+  await t.throws(dwebapi.exportFilesystemToVault({
     srcPath,
     dstVault,
     dstPath: '/bad/subdir',
     inplaceImport: true
   }))
-  await t.throws(dpackapi.exportFilesystemToVault({
+  await t.throws(dwebapi.exportFilesystemToVault({
     srcPath,
     dstVault,
     dstPath: '/bad/subdir'
   }))
-  await t.throws(dpackapi.exportFilesystemToVault({
+  await t.throws(dwebapi.exportFilesystemToVault({
     srcPath,
     dstVault,
     dstPath: '/subdir3/foo.txt',
     inplaceImport: true
   }))
-  await t.throws(dpackapi.exportFilesystemToVault({
+  await t.throws(dwebapi.exportFilesystemToVault({
     srcPath,
     dstVault,
     dstPath: '/subdir3/foo.txt'
@@ -144,7 +144,7 @@ test('exportVaultToFilesystem', async t => {
   // export all
   // =
 
-  const statsA = await dpackapi.exportVaultToFilesystem({
+  const statsA = await dwebapi.exportVaultToFilesystem({
     srcVault,
     dstPath: dstPathA
   })
@@ -158,7 +158,7 @@ test('exportVaultToFilesystem', async t => {
   // fail export
   // =
 
-  const errorA = await t.throws(dpackapi.exportVaultToFilesystem({
+  const errorA = await t.throws(dwebapi.exportVaultToFilesystem({
     srcVault,
     dstPath: dstPathA
   }))
@@ -167,7 +167,7 @@ test('exportVaultToFilesystem', async t => {
   // overwrite all
   // =
 
-  const statsB = await dpackapi.exportVaultToFilesystem({
+  const statsB = await dwebapi.exportVaultToFilesystem({
     srcVault,
     dstPath: dstPathA,
     overwriteExisting: true
@@ -181,7 +181,7 @@ test('exportVaultToFilesystem', async t => {
   // export subdir
   // =
 
-  const statsC = await dpackapi.exportVaultToFilesystem({
+  const statsC = await dwebapi.exportVaultToFilesystem({
     srcVault,
     dstPath: dstPathB,
     srcPath: '/subdir'
@@ -226,74 +226,73 @@ test('exportVaultToVault', async t => {
   // export all
   // =
 
-  await dpackapi.exportVaultToVault({
+  await dwebapi.exportVaultToVault({
     srcVault: srcVaultA,
     dstVault: dstVaultA
   })
 
-  t.deepEqual((await dpackapi.readdir(dstVaultA, '/')).sort(), ['bar.data', 'foo.txt', 'subdir'])
-  t.deepEqual((await dpackapi.readdir(dstVaultA, '/subdir')).sort(), ['bar.data', 'foo.txt'])
+  t.deepEqual((await dwebapi.readdir(dstVaultA, '/')).sort(), ['bar.data', 'foo.txt', 'subdir'])
+  t.deepEqual((await dwebapi.readdir(dstVaultA, '/subdir')).sort(), ['bar.data', 'foo.txt'])
 
   // export from subdir
   // =
 
-  await dpackapi.exportVaultToVault({
+  await dwebapi.exportVaultToVault({
     srcVault: srcVaultA,
     dstVault: dstVaultB,
     srcPath: '/subdir'
   })
 
-  t.deepEqual((await dpackapi.readdir(dstVaultB, '/')).sort(), ['bar.data', 'foo.txt'])
+  t.deepEqual((await dwebapi.readdir(dstVaultB, '/')).sort(), ['bar.data', 'foo.txt'])
 
   // export to subdir
   // =
 
-  await dpackapi.exportVaultToVault({
+  await dwebapi.exportVaultToVault({
     srcVault: srcVaultA,
     dstVault: dstVaultC,
     dstPath: '/gpdir'
   })
 
-  t.deepEqual((await dpackapi.readdir(dstVaultC, '/')).sort(), ['gpdir'])
-  t.deepEqual((await dpackapi.readdir(dstVaultC, '/gpdir')).sort(), ['bar.data', 'foo.txt', 'subdir'])
-  t.deepEqual((await dpackapi.readdir(dstVaultC, '/gpdir/subdir')).sort(), ['bar.data', 'foo.txt'])
+  t.deepEqual((await dwebapi.readdir(dstVaultC, '/')).sort(), ['gpdir'])
+  t.deepEqual((await dwebapi.readdir(dstVaultC, '/gpdir')).sort(), ['bar.data', 'foo.txt', 'subdir'])
+  t.deepEqual((await dwebapi.readdir(dstVaultC, '/gpdir/subdir')).sort(), ['bar.data', 'foo.txt'])
 
   // export from subdir to subdir
   // =
 
-  await dpackapi.exportVaultToVault({
+  await dwebapi.exportVaultToVault({
     srcVault: srcVaultA,
     dstVault: dstVaultD,
     srcPath: '/subdir',
     dstPath: '/gpdir'
   })
 
-  t.deepEqual((await dpackapi.readdir(dstVaultD, '/')).sort(), ['gpdir'])
-  t.deepEqual((await dpackapi.readdir(dstVaultD, '/gpdir')).sort(), ['bar.data', 'foo.txt'])
+  t.deepEqual((await dwebapi.readdir(dstVaultD, '/')).sort(), ['gpdir'])
+  t.deepEqual((await dwebapi.readdir(dstVaultD, '/gpdir')).sort(), ['bar.data', 'foo.txt'])
 
   // export all and overwrite target
   // =
 
-  await dpackapi.exportVaultToVault({
+  await dwebapi.exportVaultToVault({
     srcVault: srcVaultA,
     dstVault: dstVaultE
   })
 
-  t.deepEqual((await dpackapi.readdir(dstVaultE, '/')).sort(), ['bar.data', 'foo.txt', 'otherfile.txt', 'subdir'])
-  t.deepEqual((await dpackapi.readdir(dstVaultE, '/subdir')).sort(), ['bar.data', 'foo.txt'])
+  t.deepEqual((await dwebapi.readdir(dstVaultE, '/')).sort(), ['bar.data', 'foo.txt', 'otherfile.txt', 'subdir'])
+  t.deepEqual((await dwebapi.readdir(dstVaultE, '/subdir')).sort(), ['bar.data', 'foo.txt'])
 
   // into bad subdir
   // =
 
-  await t.throws(dpackapi.exportVaultToVault({
+  await t.throws(dwebapi.exportVaultToVault({
     srcVault: srcVaultA,
     dstVault: dstVaultE,
     dstPath: '/bad/subdir'
   }))
-  await t.throws(dpackapi.exportVaultToVault({
+  await t.throws(dwebapi.exportVaultToVault({
     srcVault: srcVaultA,
     dstVault: dstVaultE,
     dstPath: '/foo.txt'
   }))
 })
-

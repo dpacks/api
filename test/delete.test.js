@@ -1,7 +1,7 @@
 const test = require('ava')
 const ddrive = require('@ddrive/core')
 const tutil = require('./util')
-const dpackapi = require('../index')
+const dwebapi = require('../index')
 
 test('unlink', async t => {
   var vault = await tutil.createVault([
@@ -13,13 +13,13 @@ test('unlink', async t => {
     'c/b/a'
   ])
 
-  await dpackapi.unlink(vault, '/a')
-  await t.throws(dpackapi.stat(vault, '/a'))
-  await dpackapi.unlink(vault, 'b/a')
-  await t.throws(dpackapi.stat(vault, 'b/a'))
-  await dpackapi.unlink(vault, '/c/b/a')
-  await t.throws(dpackapi.stat(vault, '/c/b/a'))
-  t.deepEqual((await dpackapi.readdir(vault, '/', {recursive: true})).sort().map(tutil.tonix), ['b', 'c', 'c/b'])
+  await dwebapi.unlink(vault, '/a')
+  await t.throws(dwebapi.stat(vault, '/a'))
+  await dwebapi.unlink(vault, 'b/a')
+  await t.throws(dwebapi.stat(vault, 'b/a'))
+  await dwebapi.unlink(vault, '/c/b/a')
+  await t.throws(dwebapi.stat(vault, '/c/b/a'))
+  t.deepEqual((await dwebapi.readdir(vault, '/', {recursive: true})).sort().map(tutil.tonix), ['b', 'c', 'c/b'])
 })
 
 test('unlink NotFoundError, NotAFileError', async t => {
@@ -32,9 +32,9 @@ test('unlink NotFoundError, NotAFileError', async t => {
     'c/b/a'
   ])
 
-  const err1 = await t.throws(dpackapi.unlink(vault, '/bar'))
+  const err1 = await t.throws(dwebapi.unlink(vault, '/bar'))
   t.truthy(err1.notFound)
-  const err2 = await t.throws(dpackapi.unlink(vault, '/b'))
+  const err2 = await t.throws(dwebapi.unlink(vault, '/b'))
   t.truthy(err2.notAFile)
 })
 
@@ -47,10 +47,10 @@ test('rmdir', async t => {
     'c/b/'
   ])
 
-  await dpackapi.rmdir(vault, 'b/a')
-  await dpackapi.rmdir(vault, 'b')
-  await dpackapi.rmdir(vault, 'c/b')
-  t.deepEqual((await dpackapi.readdir(vault, '/', {recursive: true})).sort(), ['a', 'c'])
+  await dwebapi.rmdir(vault, 'b/a')
+  await dwebapi.rmdir(vault, 'b')
+  await dwebapi.rmdir(vault, 'c/b')
+  t.deepEqual((await dwebapi.readdir(vault, '/', {recursive: true})).sort(), ['a', 'c'])
 })
 
 test('rmdir recursive', async t => {
@@ -71,8 +71,8 @@ test('rmdir recursive', async t => {
     'c/b/'
   ])
 
-  await dpackapi.rmdir(vault, 'b', {recursive: true})
-  t.deepEqual((await dpackapi.readdir(vault, '/', {recursive: true})).map(tutil.tonix).sort(), ['a', 'c', 'c/b'])
+  await dwebapi.rmdir(vault, 'b', {recursive: true})
+  t.deepEqual((await dwebapi.readdir(vault, '/', {recursive: true})).map(tutil.tonix).sort(), ['a', 'c', 'c/b'])
 })
 
 test('rmdir NotFoundError, NotAFolderError, DestDirectoryNotEmpty', async t => {
@@ -84,21 +84,21 @@ test('rmdir NotFoundError, NotAFolderError, DestDirectoryNotEmpty', async t => {
     'c/b/'
   ])
 
-  const err1 = await t.throws(dpackapi.rmdir(vault, '/bar'))
+  const err1 = await t.throws(dwebapi.rmdir(vault, '/bar'))
   t.truthy(err1.notFound)
-  const err2 = await t.throws(dpackapi.rmdir(vault, '/a'))
+  const err2 = await t.throws(dwebapi.rmdir(vault, '/a'))
   t.truthy(err2.notAFolder)
-  const err3 = await t.throws(dpackapi.rmdir(vault, '/b'))
+  const err3 = await t.throws(dwebapi.rmdir(vault, '/b'))
   t.truthy(err3.destDirectoryNotEmpty)
 })
 
 test('VaultNotWritableError', async t => {
-  const vault = ddrive(tutil.tmpdir(), tutil.FAKE_DPACK_KEY, {createIfMissing: false})
+  const vault = ddrive(tutil.tmpdir(), tutil.FAKE_DWEB_KEY, {createIfMissing: false})
   await new Promise(resolve => vault.ready(resolve))
 
-  const err1 = await t.throws(dpackapi.unlink(vault, '/bar'))
+  const err1 = await t.throws(dwebapi.unlink(vault, '/bar'))
   t.truthy(err1.vaultNotWritable)
-  const err2 = await t.throws(dpackapi.rmdir(vault, '/bar'))
+  const err2 = await t.throws(dwebapi.rmdir(vault, '/bar'))
   t.truthy(err2.vaultNotWritable)
 })
 
@@ -112,13 +112,13 @@ test('unlink w/fs', async t => {
     'c/b/a'
   ])
 
-  await dpackapi.unlink(fs, '/a')
-  await t.throws(dpackapi.stat(fs, '/a'))
-  await dpackapi.unlink(fs, 'b/a')
-  await t.throws(dpackapi.stat(fs, 'b/a'))
-  await dpackapi.unlink(fs, '/c/b/a')
-  await t.throws(dpackapi.stat(fs, '/c/b/a'))
-  t.deepEqual((await dpackapi.readdir(fs, '/', {recursive: true})).sort().map(tutil.tonix), ['b', 'c', 'c/b'])
+  await dwebapi.unlink(fs, '/a')
+  await t.throws(dwebapi.stat(fs, '/a'))
+  await dwebapi.unlink(fs, 'b/a')
+  await t.throws(dwebapi.stat(fs, 'b/a'))
+  await dwebapi.unlink(fs, '/c/b/a')
+  await t.throws(dwebapi.stat(fs, '/c/b/a'))
+  t.deepEqual((await dwebapi.readdir(fs, '/', {recursive: true})).sort().map(tutil.tonix), ['b', 'c', 'c/b'])
 })
 
 test('unlink NotFoundError, NotAFileError w/fs', async t => {
@@ -131,9 +131,9 @@ test('unlink NotFoundError, NotAFileError w/fs', async t => {
     'c/b/a'
   ])
 
-  const err1 = await t.throws(dpackapi.unlink(fs, '/bar'))
+  const err1 = await t.throws(dwebapi.unlink(fs, '/bar'))
   t.truthy(err1.notFound)
-  const err2 = await t.throws(dpackapi.unlink(fs, '/b'))
+  const err2 = await t.throws(dwebapi.unlink(fs, '/b'))
   t.truthy(err2.notAFile)
 })
 
@@ -146,10 +146,10 @@ test('rmdir w/fs', async t => {
     'c/b/'
   ])
 
-  await dpackapi.rmdir(fs, 'b/a')
-  await dpackapi.rmdir(fs, 'b')
-  await dpackapi.rmdir(fs, 'c/b')
-  t.deepEqual((await dpackapi.readdir(fs, '/', {recursive: true})).sort(), ['a', 'c'])
+  await dwebapi.rmdir(fs, 'b/a')
+  await dwebapi.rmdir(fs, 'b')
+  await dwebapi.rmdir(fs, 'c/b')
+  t.deepEqual((await dwebapi.readdir(fs, '/', {recursive: true})).sort(), ['a', 'c'])
 })
 
 test('rmdir recursive w/fs', async t => {
@@ -170,8 +170,8 @@ test('rmdir recursive w/fs', async t => {
     'c/b/'
   ])
 
-  await dpackapi.rmdir(fs, 'b', {recursive: true})
-  t.deepEqual((await dpackapi.readdir(fs, '/', {recursive: true})).map(tutil.tonix).sort(), ['a', 'c', 'c/b'])
+  await dwebapi.rmdir(fs, 'b', {recursive: true})
+  t.deepEqual((await dwebapi.readdir(fs, '/', {recursive: true})).map(tutil.tonix).sort(), ['a', 'c', 'c/b'])
 })
 
 test('rmdir NotFoundError, NotAFolderError, DestDirectoryNotEmpty w/fs', async t => {
@@ -183,10 +183,10 @@ test('rmdir NotFoundError, NotAFolderError, DestDirectoryNotEmpty w/fs', async t
     'c/b/'
   ])
 
-  const err1 = await t.throws(dpackapi.rmdir(fs, '/bar'))
+  const err1 = await t.throws(dwebapi.rmdir(fs, '/bar'))
   t.truthy(err1.notFound)
-  const err2 = await t.throws(dpackapi.rmdir(fs, '/a'))
+  const err2 = await t.throws(dwebapi.rmdir(fs, '/a'))
   t.truthy(err2.notAFolder)
-  const err3 = await t.throws(dpackapi.rmdir(fs, '/b'))
+  const err3 = await t.throws(dwebapi.rmdir(fs, '/b'))
   t.truthy(err3.destDirectoryNotEmpty)
 })

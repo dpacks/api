@@ -1,12 +1,12 @@
 const test = require('ava')
 const {NotFoundError, NotAFileError} = require('@dbrowser/errors')
 const tutil = require('./util')
-const dpackapi = require('../index')
+const dwebapi = require('../index')
 
 var target
 async function readTest (t, path, expected, errorTests) {
   try {
-    var data = await dpackapi.readFile(target, path, Buffer.isBuffer(expected) ? 'binary' : 'utf8')
+    var data = await dwebapi.readFile(target, path, Buffer.isBuffer(expected) ? 'binary' : 'utf8')
     t.deepEqual(data, expected)
   } catch (e) {
     if (errorTests) errorTests(t, e)
@@ -71,9 +71,9 @@ test('readFile encodings', async t => {
     { name: 'buf', content: Buffer.from([0x00, 0x01, 0x02, 0x03]) }
   ])
 
-  await t.deepEqual(await dpackapi.readFile(vault, 'buf', 'binary'), Buffer.from([0x00, 0x01, 0x02, 0x03]))
-  await t.deepEqual(await dpackapi.readFile(vault, 'buf', 'hex'), '00010203')
-  await t.deepEqual(await dpackapi.readFile(vault, 'buf', 'base64'), 'AAECAw==')
+  await t.deepEqual(await dwebapi.readFile(vault, 'buf', 'binary'), Buffer.from([0x00, 0x01, 0x02, 0x03]))
+  await t.deepEqual(await dwebapi.readFile(vault, 'buf', 'hex'), '00010203')
+  await t.deepEqual(await dwebapi.readFile(vault, 'buf', 'base64'), 'AAECAw==')
 })
 
 test('readFile encodings w/fs', async t => {
@@ -81,9 +81,9 @@ test('readFile encodings w/fs', async t => {
     { name: 'buf', content: Buffer.from([0x00, 0x01, 0x02, 0x03]) }
   ])
 
-  await t.deepEqual(await dpackapi.readFile(fs, 'buf', 'binary'), Buffer.from([0x00, 0x01, 0x02, 0x03]))
-  await t.deepEqual(await dpackapi.readFile(fs, 'buf', 'hex'), '00010203')
-  await t.deepEqual(await dpackapi.readFile(fs, 'buf', 'base64'), 'AAECAw==')
+  await t.deepEqual(await dwebapi.readFile(fs, 'buf', 'binary'), Buffer.from([0x00, 0x01, 0x02, 0x03]))
+  await t.deepEqual(await dwebapi.readFile(fs, 'buf', 'hex'), '00010203')
+  await t.deepEqual(await dwebapi.readFile(fs, 'buf', 'base64'), 'AAECAw==')
 })
 
 test('readdir', async t => {
@@ -93,11 +93,11 @@ test('readdir', async t => {
     'baz'
   ])
 
-  t.deepEqual(await dpackapi.readdir(vault, ''), ['foo', 'baz'])
-  t.deepEqual(await dpackapi.readdir(vault, '/'), ['foo', 'baz'])
-  t.deepEqual(await dpackapi.readdir(vault, 'foo'), ['bar'])
-  t.deepEqual(await dpackapi.readdir(vault, '/foo'), ['bar'])
-  t.deepEqual(await dpackapi.readdir(vault, '/foo/'), ['bar'])
+  t.deepEqual(await dwebapi.readdir(vault, ''), ['foo', 'baz'])
+  t.deepEqual(await dwebapi.readdir(vault, '/'), ['foo', 'baz'])
+  t.deepEqual(await dwebapi.readdir(vault, 'foo'), ['bar'])
+  t.deepEqual(await dwebapi.readdir(vault, '/foo'), ['bar'])
+  t.deepEqual(await dwebapi.readdir(vault, '/foo/'), ['bar'])
 })
 
 test('readdir w/fs', async t => {
@@ -107,11 +107,11 @@ test('readdir w/fs', async t => {
     'baz'
   ])
 
-  t.deepEqual((await dpackapi.readdir(fs, '')).sort(), ['baz', 'foo'])
-  t.deepEqual((await dpackapi.readdir(fs, '/')).sort(), ['baz', 'foo'])
-  t.deepEqual(await dpackapi.readdir(fs, 'foo'), ['bar'])
-  t.deepEqual(await dpackapi.readdir(fs, '/foo'), ['bar'])
-  t.deepEqual(await dpackapi.readdir(fs, '/foo/'), ['bar'])
+  t.deepEqual((await dwebapi.readdir(fs, '')).sort(), ['baz', 'foo'])
+  t.deepEqual((await dwebapi.readdir(fs, '/')).sort(), ['baz', 'foo'])
+  t.deepEqual(await dwebapi.readdir(fs, 'foo'), ['bar'])
+  t.deepEqual(await dwebapi.readdir(fs, '/foo'), ['bar'])
+  t.deepEqual(await dwebapi.readdir(fs, '/foo/'), ['bar'])
 })
 
 test('readdir recursive', async t => {
@@ -128,7 +128,7 @@ test('readdir recursive', async t => {
     'c/b'
   ])
 
-  t.deepEqual((await dpackapi.readdir(vault, '/', {recursive: true})).map(tutil.tonix).sort(), [
+  t.deepEqual((await dwebapi.readdir(vault, '/', {recursive: true})).map(tutil.tonix).sort(), [
     'a',
     'b',
     'b/a',
@@ -141,7 +141,7 @@ test('readdir recursive', async t => {
     'c/b'
   ])
 
-  t.deepEqual((await dpackapi.readdir(vault, '/b', {recursive: true})).map(tutil.tonix).map(stripPrecedingSlash).sort(), [
+  t.deepEqual((await dwebapi.readdir(vault, '/b', {recursive: true})).map(tutil.tonix).map(stripPrecedingSlash).sort(), [
     'a',
     'b',
     'b/a',
@@ -149,12 +149,12 @@ test('readdir recursive', async t => {
     'c'
   ])
 
-  t.deepEqual((await dpackapi.readdir(vault, '/b/b', {recursive: true})).map(tutil.tonix).sort(), [
+  t.deepEqual((await dwebapi.readdir(vault, '/b/b', {recursive: true})).map(tutil.tonix).sort(), [
     'a',
     'b'
   ])
 
-  t.deepEqual((await dpackapi.readdir(vault, '/c', {recursive: true})).map(tutil.tonix).sort(), [
+  t.deepEqual((await dwebapi.readdir(vault, '/c', {recursive: true})).map(tutil.tonix).sort(), [
     'a',
     'b'
   ])
@@ -174,7 +174,7 @@ test('readdir recursive w/fs', async t => {
     'c/b'
   ])
 
-  t.deepEqual((await dpackapi.readdir(fs, '/', {recursive: true})).map(tutil.tonix).sort(), [
+  t.deepEqual((await dwebapi.readdir(fs, '/', {recursive: true})).map(tutil.tonix).sort(), [
     'a',
     'b',
     'b/a',
@@ -187,7 +187,7 @@ test('readdir recursive w/fs', async t => {
     'c/b'
   ])
 
-  t.deepEqual((await dpackapi.readdir(fs, '/b', {recursive: true})).map(tutil.tonix).map(stripPrecedingSlash).sort(), [
+  t.deepEqual((await dwebapi.readdir(fs, '/b', {recursive: true})).map(tutil.tonix).map(stripPrecedingSlash).sort(), [
     'a',
     'b',
     'b/a',
@@ -195,12 +195,12 @@ test('readdir recursive w/fs', async t => {
     'c'
   ])
 
-  t.deepEqual((await dpackapi.readdir(fs, '/b/b', {recursive: true})).map(tutil.tonix).sort(), [
+  t.deepEqual((await dwebapi.readdir(fs, '/b/b', {recursive: true})).map(tutil.tonix).sort(), [
     'a',
     'b'
   ])
 
-  t.deepEqual((await dpackapi.readdir(fs, '/c', {recursive: true})).map(tutil.tonix).sort(), [
+  t.deepEqual((await dwebapi.readdir(fs, '/c', {recursive: true})).map(tutil.tonix).sort(), [
     'a',
     'b'
   ])
@@ -223,14 +223,14 @@ test('readSize', async t => {
     'c/b'
   ])
 
-  var size1 = await dpackapi.readSize(vault1, '/')
-  var size2 = await dpackapi.readSize(vault2, '/')
+  var size1 = await dwebapi.readSize(vault1, '/')
+  var size2 = await dwebapi.readSize(vault2, '/')
 
   t.truthy(size1 > 0)
   t.truthy(size2 > 0)
   t.truthy(size2 > size1)
 
-  var size3 = await dpackapi.readSize(vault2, '/b')
+  var size3 = await dwebapi.readSize(vault2, '/b')
 
   t.truthy(size3 > 0)
 })
@@ -252,14 +252,14 @@ test('readSize w/fs', async t => {
     'c/b'
   ])
 
-  var size1 = await dpackapi.readSize(fs1, '/')
-  var size2 = await dpackapi.readSize(fs2, '/')
+  var size1 = await dwebapi.readSize(fs1, '/')
+  var size2 = await dwebapi.readSize(fs2, '/')
 
   t.truthy(size1 > 0)
   t.truthy(size2 > 0)
   t.truthy(size2 > size1)
 
-  var size3 = await dpackapi.readSize(fs2, '/b')
+  var size3 = await dwebapi.readSize(fs2, '/b')
 
   t.truthy(size3 > 0)
 })

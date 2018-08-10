@@ -4,7 +4,7 @@ const fs = require('fs')
 const os = require('os')
 const path = require('path')
 
-const FAKE_DPACK_KEY = 'f'.repeat(64)
+const FAKE_DWEB_KEY = 'f'.repeat(64)
 
 function createVault (names) {
   return populate(ddrive(tmpdir()), names)
@@ -37,11 +37,11 @@ async function populate (target, names) {
 }
 
 function tmpdir () {
-  return fs.mkdtempSync(os.tmpdir() + path.sep + 'dpack-api-v2-test-')
+  return fs.mkdtempSync(os.tmpdir() + path.sep + 'dweb-api-v2-test-')
 }
 
 function tonix (str) {
   return str.replace(/\\/g, '/')
 }
 
-module.exports = {FAKE_DPACK_KEY, createVault, createFs, tmpdir, tonix}
+module.exports = {FAKE_DWEB_KEY, createVault, createFs, tmpdir, tonix}

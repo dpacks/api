@@ -1,6 +1,6 @@
 const test = require('ava')
 const tutil = require('./util')
-const dpackapi = require('../index')
+const dwebapi = require('../index')
 
 test('diff against empty', async t => {
   var changes
@@ -20,7 +20,7 @@ test('diff against empty', async t => {
   // diff root against empty root, shallow=false, filter=none, ops=all
   // =
 
-  changes = await dpackapi.diff(srcVault, '/', dstVault, '/')
+  changes = await dwebapi.diff(srcVault, '/', dstVault, '/')
   t.deepEqual(changes.map(massageDiffObj), [
     { change: 'add', type: 'file', path: '/foo.txt' },
     { change: 'add', type: 'file', path: '/bar.data' },
@@ -32,7 +32,7 @@ test('diff against empty', async t => {
   // diff root against empty root, shallow=true, filter=none, ops=all
   // =
 
-  changes = await dpackapi.diff(srcVault, '/', dstVault, '/', {shallow: true})
+  changes = await dwebapi.diff(srcVault, '/', dstVault, '/', {shallow: true})
   t.deepEqual(changes.map(massageDiffObj), [
     { change: 'add', type: 'file', path: '/foo.txt' },
     { change: 'add', type: 'file', path: '/bar.data' },
@@ -42,7 +42,7 @@ test('diff against empty', async t => {
   // diff root against empty root, shallow=false, filter=yes, ops=all
   // =
 
-  changes = await dpackapi.diff(srcVault, '/', dstVault, '/', {paths: ['/foo.txt', '/subdir']})
+  changes = await dwebapi.diff(srcVault, '/', dstVault, '/', {paths: ['/foo.txt', '/subdir']})
   t.deepEqual(changes.map(massageDiffObj), [
     { change: 'add', type: 'file', path: '/foo.txt' },
     { change: 'add', type: 'dir', path: '/subdir' },
@@ -53,13 +53,13 @@ test('diff against empty', async t => {
   // diff root against empty root, shallow=false, filter=none, ops=mod
   // =
 
-  changes = await dpackapi.diff(srcVault, '/', dstVault, '/', {ops: ['mod']})
+  changes = await dwebapi.diff(srcVault, '/', dstVault, '/', {ops: ['mod']})
   t.deepEqual(changes, [])
 
   // diff subdir against empty root, shallow=false, filter=none, ops=all
   // =
 
-  changes = await dpackapi.diff(srcVault, '/subdir', dstVault, '/')
+  changes = await dwebapi.diff(srcVault, '/subdir', dstVault, '/')
   t.deepEqual(changes.map(massageDiffObj), [
     { change: 'add', type: 'file', path: '/bar.data' },
     { change: 'add', type: 'file', path: '/foo.txt' }
@@ -68,7 +68,7 @@ test('diff against empty', async t => {
   // diff root against nonexistent empty subdir, shallow=false, filter=none, ops=all
   // =
 
-  await t.throws(dpackapi.diff(srcVault, '/', dstVault, '/subdir'))
+  await t.throws(dwebapi.diff(srcVault, '/', dstVault, '/subdir'))
 })
 
 test('diff against populated', async t => {
@@ -98,7 +98,7 @@ test('diff against populated', async t => {
   // diff root against populated root, shallow=false, filter=none, ops=all
   // =
 
-  changes = await dpackapi.diff(srcVault, '/', dstVault, '/')
+  changes = await dwebapi.diff(srcVault, '/', dstVault, '/')
   t.deepEqual(changes.map(massageDiffObj), [
     { change: 'del', type: 'file', path: '/otherfile.txt' },
     { change: 'mod', type: 'file', path: '/foo.txt' },
@@ -114,7 +114,7 @@ test('diff against populated', async t => {
   // diff root against populated root, shallow=true, filter=none, ops=all
   // =
 
-  changes = await dpackapi.diff(srcVault, '/', dstVault, '/', {shallow: true})
+  changes = await dwebapi.diff(srcVault, '/', dstVault, '/', {shallow: true})
   t.deepEqual(changes.map(massageDiffObj), [
     { change: 'del', type: 'file', path: '/otherfile.txt' },
     { change: 'mod', type: 'file', path: '/foo.txt' },
@@ -129,7 +129,7 @@ test('diff against populated', async t => {
   // diff root against populated root, shallow=false, filter=yes, ops=all
   // =
 
-  changes = await dpackapi.diff(srcVault, '/', dstVault, '/', {paths: ['/foo.txt', '/subdir']})
+  changes = await dwebapi.diff(srcVault, '/', dstVault, '/', {paths: ['/foo.txt', '/subdir']})
   t.deepEqual(changes.map(massageDiffObj), [
     { change: 'mod', type: 'file', path: '/foo.txt' },
     { change: 'del', type: 'dir', path: '/subdir/foo.txt' },
@@ -142,13 +142,13 @@ test('diff against populated', async t => {
   // diff root against populated root, shallow=false, filter=none, ops=mod
   // =
 
-  changes = await dpackapi.diff(srcVault, '/', dstVault, '/', {ops: ['mod']})
+  changes = await dwebapi.diff(srcVault, '/', dstVault, '/', {ops: ['mod']})
   t.deepEqual(changes.map(massageDiffObj), [ { change: 'mod', type: 'file', path: '/foo.txt' } ])
 
   // diff subdir against populated root, shallow=false, filter=none, ops=all
   // =
 
-  changes = await dpackapi.diff(srcVault, '/subdir', dstVault, '/')
+  changes = await dwebapi.diff(srcVault, '/subdir', dstVault, '/')
   t.deepEqual(changes.map(massageDiffObj), [
     { change: 'del', type: 'file', path: '/otherfile.txt' },
     { change: 'mod', type: 'file', path: '/foo.txt' },
@@ -163,7 +163,7 @@ test('diff against populated', async t => {
   // diff root against populated subdir, shallow=false, filter=none, ops=all
   // =
 
-  changes = await dpackapi.diff(srcVault, '/', dstVault, '/subdir')
+  changes = await dwebapi.diff(srcVault, '/', dstVault, '/subdir')
   t.deepEqual(changes.map(massageDiffObj), [
     { change: 'add', type: 'dir', path: '/subdir' },
     { change: 'add', type: 'file', path: '/subdir/bar.data' },
@@ -176,11 +176,11 @@ test('diff against populated', async t => {
   ])
 })
 
-test('diff always ignores dpack.json', async t => {
+test('diff always ignores dweb.json', async t => {
   var changes
 
   const srcVault = await tutil.createVault([
-    'dpack.json',
+    'dweb.json',
     'foo.txt',
     { name: 'bar.data', content: Buffer.from([0x00, 0x01]) },
     'subdir/',
@@ -195,9 +195,9 @@ test('diff always ignores dpack.json', async t => {
   // no paths filter
   // =
 
-  changes = await dpackapi.diff(srcVault, '/', dstVault, '/')
+  changes = await dwebapi.diff(srcVault, '/', dstVault, '/')
   t.deepEqual(changes.map(massageDiffObj), [
-    // NOTE: no dpack.json
+    // NOTE: no dweb.json
     { change: 'add', type: 'file', path: '/foo.txt' },
     { change: 'add', type: 'file', path: '/bar.data' },
     { change: 'add', type: 'dir', path: '/subdir' },
@@ -208,21 +208,21 @@ test('diff always ignores dpack.json', async t => {
   // with paths filter
   // =
 
-  changes = await dpackapi.diff(srcVault, '/', dstVault, '/', {paths: ['/foo.txt', '/subdir']})
+  changes = await dwebapi.diff(srcVault, '/', dstVault, '/', {paths: ['/foo.txt', '/subdir']})
   t.deepEqual(changes.map(massageDiffObj), [
-    // NOTE: no dpack.json
+    // NOTE: no dweb.json
     { change: 'add', type: 'file', path: '/foo.txt' },
     { change: 'add', type: 'dir', path: '/subdir' },
     { change: 'add', type: 'file', path: '/subdir/bar.data' },
     { change: 'add', type: 'file', path: '/subdir/foo.txt' }
   ])
 
-  // with paths filter that tries to include dpack.json
+  // with paths filter that tries to include dweb.json
   // =
 
-  changes = await dpackapi.diff(srcVault, '/', dstVault, '/', {paths: ['/dpack.json', '/foo.txt', '/subdir']})
+  changes = await dwebapi.diff(srcVault, '/', dstVault, '/', {paths: ['/dweb.json', '/foo.txt', '/subdir']})
   t.deepEqual(changes.map(massageDiffObj), [
-    // NOTE: no dpack.json
+    // NOTE: no dweb.json
     { change: 'add', type: 'file', path: '/foo.txt' },
     { change: 'add', type: 'dir', path: '/subdir' },
     { change: 'add', type: 'file', path: '/subdir/bar.data' },
@@ -245,7 +245,7 @@ test('merge into empty', async t => {
   await new Promise(resolve => srcVault.ready(resolve))
   await new Promise(resolve => dstVault.ready(resolve))
 
-  changes = await dpackapi.merge(srcVault, '/', dstVault, '/')
+  changes = await dwebapi.merge(srcVault, '/', dstVault, '/')
   t.deepEqual(changes.map(massageDiffObj), [
     { change: 'add', type: 'file', path: '/foo.txt' },
     { change: 'add', type: 'file', path: '/bar.data' },
@@ -254,8 +254,8 @@ test('merge into empty', async t => {
     { change: 'add', type: 'file', path: '/subdir/foo.txt' }
   ])
 
-  t.deepEqual((await dpackapi.readdir(dstVault, '/')).sort(), ['bar.data', 'foo.txt', 'subdir'])
-  t.deepEqual((await dpackapi.readdir(dstVault, '/subdir')).sort(), ['bar.data', 'foo.txt'])
+  t.deepEqual((await dwebapi.readdir(dstVault, '/')).sort(), ['bar.data', 'foo.txt', 'subdir'])
+  t.deepEqual((await dwebapi.readdir(dstVault, '/subdir')).sort(), ['bar.data', 'foo.txt'])
 })
 
 test('merge into populated', async t => {
@@ -282,7 +282,7 @@ test('merge into populated', async t => {
   await new Promise(resolve => srcVault.ready(resolve))
   await new Promise(resolve => dstVault.ready(resolve))
 
-  changes = await dpackapi.merge(srcVault, '/', dstVault, '/')
+  changes = await dwebapi.merge(srcVault, '/', dstVault, '/')
   t.deepEqual(changes.map(massageDiffObj), [
     { change: 'del', type: 'file', path: '/otherfile.txt' },
     { change: 'mod', type: 'file', path: '/foo.txt' },
@@ -295,9 +295,9 @@ test('merge into populated', async t => {
     { change: 'add', type: 'file', path: '/subdir/bar.data' }
   ])
 
-  t.deepEqual((await dpackapi.readdir(dstVault, '/')).sort(), ['bar.data', 'foo.txt', 'subdir'])
-  t.deepEqual((await dpackapi.readdir(dstVault, '/subdir')).sort(), ['bar.data', 'foo.txt'])
-  t.deepEqual((await dpackapi.stat(dstVault, '/bar.data')).isFile(), true)
+  t.deepEqual((await dwebapi.readdir(dstVault, '/')).sort(), ['bar.data', 'foo.txt', 'subdir'])
+  t.deepEqual((await dwebapi.readdir(dstVault, '/subdir')).sort(), ['bar.data', 'foo.txt'])
+  t.deepEqual((await dwebapi.stat(dstVault, '/bar.data')).isFile(), true)
 })
 
 test('merge into populated (add only)', async t => {
@@ -324,16 +324,16 @@ test('merge into populated (add only)', async t => {
   await new Promise(resolve => srcVault.ready(resolve))
   await new Promise(resolve => dstVault.ready(resolve))
 
-  changes = await dpackapi.merge(srcVault, '/', dstVault, '/', {ops: ['add']})
+  changes = await dwebapi.merge(srcVault, '/', dstVault, '/', {ops: ['add']})
   t.deepEqual(changes.map(massageDiffObj), [
     { change: 'add', type: 'file', path: '/bar.data' },
     { change: 'add', type: 'file', path: '/subdir/foo.txt' },
     { change: 'add', type: 'file', path: '/subdir/bar.data' }
   ])
 
-  t.deepEqual((await dpackapi.readdir(dstVault, '/')).sort(), ['bar.data', 'foo.txt', 'otherfile.txt', 'subdir'])
-  t.deepEqual((await dpackapi.readdir(dstVault, '/subdir')).sort(), ['bar.data', 'foo.txt'])
-  t.deepEqual((await dpackapi.stat(dstVault, '/bar.data')).isFile(), true) // add-only still overwrites folders with files
+  t.deepEqual((await dwebapi.readdir(dstVault, '/')).sort(), ['bar.data', 'foo.txt', 'otherfile.txt', 'subdir'])
+  t.deepEqual((await dwebapi.readdir(dstVault, '/subdir')).sort(), ['bar.data', 'foo.txt'])
+  t.deepEqual((await dwebapi.stat(dstVault, '/bar.data')).isFile(), true) // add-only still overwrites folders with files
 })
 
 function massageDiffObj (d) {

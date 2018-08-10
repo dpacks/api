@@ -1,12 +1,12 @@
 const test = require('ava')
 const tutil = require('./util')
-const dpackapi = require('../index')
+const dwebapi = require('../index')
 
 var target
 async function stat (t, given, expected) {
   // run test
   try {
-    var entry = await dpackapi.stat(target, given)
+    var entry = await dwebapi.stat(target, given)
   } catch (e) {}
   if (expected) {
     t.truthy(entry)

@@ -148,7 +148,7 @@ test('watch fs', async t => {
   await new Promise(r => setTimeout(r, 100))
   await pda.writeFile(fs, '/a.txt', 'one', 'utf8')
   await new Promise(r => setTimeout(r, 100))
-  await pda.writeFile(fs, '/a.txt', 'two', 'utf8')
+  await pda.writeFile(fs, '/b.txt', 'two', 'utf8')
   await new Promise(r => setTimeout(r, 100))
   await pda.writeFile(fs, '/b.txt', 'two', 'utf8')
   await new Promise(r => setTimeout(r, 100))
